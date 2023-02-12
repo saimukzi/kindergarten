@@ -1,0 +1,14 @@
+/.project
+/.settings
+*.old
+.python-version
+*.log
+
+venv
+*.mid
+*.png
+*.json
+__pycache__
+
+smz_*
+tmp

@@ -1,0 +1,22 @@
+# Windows app env
+
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# DL miniconda https://docs.conda.io/en/latest/miniconda.html
+# Better install menu item
+
+conda create --name gamebot-env python=3.10
+conda deactivate
+conda activate gamebot-env
+
+python -m pip install --upgrade pip
+pip install numpy opencv-python pillow pygetwindow
+pip install mss
+pip install wmi
+pip install tensorflow-cpu
+
+# verify tensorflow
+python -c "import tensorflow as tf; print(tf.reduce_sum(tf.random.normal([1000, 1000])))"
+
+# verify GPU
+python -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
