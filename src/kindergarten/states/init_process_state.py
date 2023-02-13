@@ -13,7 +13,9 @@ def add_state(state_pool, runtime):
     state_pool.add_state(_INIT_PROCESS_1_WAIT(runtime))
     state_pool.add_state(common_state.FuncState('_INIT_PROCESS_2_RUN', _INIT_PROCESS_2_RUN, runtime))
     state_pool.add_state(_INIT_PROCESS_3_WAIT(runtime))
-    state_pool.add_state(common_state.TransState('_INIT_PROCESS_9_END','DEAD',runtime))
+    #state_pool.add_state(common_state.TransState('_INIT_PROCESS_9_END','DEAD',runtime))
+    state_pool.add_state(common_state.TransState('_INIT_PROCESS_9_END','NULL',runtime))
+    state_pool.add_state(null_state.NullState(runtime))
 
 
 def _INIT_PROCESS_0_SIGTERM(runtime, **kwargs):

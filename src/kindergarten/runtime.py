@@ -7,6 +7,7 @@ import sys
 import time
 
 from . import common
+from . import console
 from . import freq_timer
 from . import timer_pool
 from . import state_pool
@@ -37,6 +38,8 @@ class Runtime:
 
 
     def run(self):
+        self.running = True
+    
         self.timer_pool = timer_pool.TimerPool()
         self.state_pool = state_pool.StatePool()
 
@@ -46,6 +49,10 @@ class Runtime:
 
         t0 = time.time()
         self.timer_pool.add_timer(freq_timer.FreqTimer(self, t0, self.config_fps, lambda sec: self.state_pool.tick(sec=sec, runtime=self)))
+
+        self.console = console.Console(self)
+        self.console.start()
+        self.timer_pool.add_timer(freq_timer.FreqTimer(self, t0, self.config_fps, self.console.tick))
 
 #         window = pygetwindow.getWindowsWithTitle(self.window_name)
 #         assert(len(window)==1)
@@ -59,6 +66,11 @@ class Runtime:
         self.sct = mss.mss()
 
         self.timer_pool.run()
+
+
+    def stop(self):
+        self.running = False
+        self.timer_pool.stop()
 
 
 instance = None
