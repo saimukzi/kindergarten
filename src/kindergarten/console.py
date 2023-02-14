@@ -1,29 +1,35 @@
+import code
 import time
 import threading
 
 #from types import SimpleNamespace
+
+PS1 = '>>> '
+PS2 = '... '
 
 class Console:
 
     def __init__(self, runtime):
         self.runtime = runtime
         self.sn = {}
-        self.sn['runtime'] = runtime
+        self.sn['r'] = runtime
         self.line = None
-        self.line_lock = threading.Lock()
+        self.line_lock = threading.Condition()
+        self.console = code.InteractiveConsole(self.sn)
+        self.more = False
 
     def start(self):
         threading.Thread(target=self.run).start()
     
     def run(self):
         while self.runtime.running:
-            line = input()
+            with self.line_lock:
+                if self.runtime.running and self.line != None:
+                    self.line_lock.wait()
+                    continue
+            line = input(PS2 if self.more else PS1)
             with self.line_lock:
                 self.line = line
-            while self.runtime.running:
-                time.sleep(0.1)
-                with self.line_lock:
-                    if self.line != None: continue
 
     def tick(self, _):
         #print('tick')
@@ -32,8 +38,9 @@ class Console:
                 if self.line == None: return
                 line = self.line
                 self.line = None
+                self.line_lock.notify_all()
             try:
-                exec(line, self.sn)
+                self.more = self.console.push(line)
             except Exception as e:
                 print(str(e))
             except SystemExit as se:
