@@ -1,0 +1,19 @@
+# Tensorflow 2.11+ support Python 3.10.  Python 3.11 not official stated yet.
+
+# DL miniconda https://docs.conda.io/en/latest/miniconda.html
+# Better install menu item
+
+conda create --name p310t211c python=3.10
+conda deactivate
+conda activate p310t211c
+
+python -m pip install --upgrade pip wheel
+pip install tensorflow-cpu
+
+python -c "import tensorflow as tf; print(tf.reduce_sum(tf.random.normal([1000, 1000])))"
+
+# should be empty
+python -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
+
+pip install tensorflow-datasets
+python test_train.py

@@ -1,0 +1,4 @@
+conda env list
+
+conda deactivate
+conda activate p310t211c

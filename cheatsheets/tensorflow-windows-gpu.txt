@@ -1,0 +1,55 @@
+# Tensorflow 2.11+ support Windows only in WSL2
+# Tensorflow 2.11+ support Python 3.10.  Python 3.11 not official stated yet.
+
+# https://www.tensorflow.org/install/pip#windows-wsl2_1
+
+wsl --update # MUST
+
+wsl --install -d Ubuntu
+
+# Ubuntu bash
+
+nvidia-smi # if fail, it may not be wsl2
+
+mkdir -p ~/tmp/
+cd ~/tmp/
+
+wget https://developer.download.nvidia.com/compute/cuda/repos/wsl-ubuntu/x86_64/cuda-wsl-ubuntu.pin
+sudo mv cuda-wsl-ubuntu.pin /etc/apt/preferences.d/cuda-repository-pin-600
+wget https://developer.download.nvidia.com/compute/cuda/12.0.0/local_installers/cuda-repo-wsl-ubuntu-12-0-local_12.0.0-1_amd64.deb
+sudo dpkg -i cuda-repo-wsl-ubuntu-12-0-local_12.0.0-1_amd64.deb
+sudo cp /var/cuda-repo-wsl-ubuntu-12-0-local/cuda-*-keyring.gpg /usr/share/keyrings/
+sudo apt-get update
+sudo apt-get -y install cuda
+
+# install tensorrt, not working, reason unknown
+# # https://developer.nvidia.com/nvidia-tensorrt-8x-download
+# wget "https://developer.download.nvidia.com/compute/machine-learning/tensorrt/secure/8.5.3/local_repos/nv-tensorrt-local-repo-ubuntu2204-8.5.3-cuda-11.8_1.0-1_amd64.deb?AXvNkHn9zx1A94l64ygCdAlIZtTDhqlxyoaIA35_5UaFNMW0rV3B6bbKdKEA6fWpvWhmaT1fgoZVxdUtRmV6YoV_HxRptx1w8wDXrnCRIywEj_B1vpUuLsQxxzjZmPNxdrHr5QWaYrMsjL3c07AKjV7pGjuTKQaZA3asqnJz1nBB1vxGCA3tnDa1vhH5pHe2ycSY1ZLwilJV7cAjUiHj9TOtDPp9FvgNmmDj3fte_rEbULqCfQYyl2vz-A==&t=eyJscyI6InJlZiIsImxzZCI6IlJFRi1kb2NzLm52aWRpYS5jb20vIn0=" -O nv-tensorrt-local-repo-ubuntu2204-8.5.3-cuda-11.8_1.0-1_amd64.deb
+# sudo dpkg -i nv-tensorrt-local-repo-ubuntu2204-8.5.3-cuda-11.8_1.0-1_amd64.deb
+# sudo cp /var/nv-tensorrt-local-repo-ubuntu2204-8.5.3-cuda-11.8/nv-tensorrt-local-3E951519-keyring.gpg /usr/share/keyrings/
+# sudo apt-get update
+# sudo apt-get install tensorrt
+# sudo apt-get install python3-libnvinfer-dev
+
+curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+
+conda create --name p310t211g python=3.10
+conda activate p310t211g
+
+conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1.0
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CONDA_PREFIX/lib/
+mkdir -p $CONDA_PREFIX/etc/conda/activate.d
+echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CONDA_PREFIX/lib/' > $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh
+
+python -m pip install --upgrade pip wheel
+
+pip install tensorflow
+
+python3 -c "import tensorflow as tf; print(tf.reduce_sum(tf.random.normal([1000, 1000])))"
+
+python3 -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
+
+pip install tensorflow-datasets
+python test_train.py
