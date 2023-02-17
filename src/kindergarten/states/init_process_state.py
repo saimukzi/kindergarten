@@ -8,45 +8,45 @@ from . import common_state
 from . import null_state
 
 def add_state(state_pool, runtime):
-    state_pool.add_state(common_state.TransState('INIT_PROCESS','_INIT_PROCESS_0_SIGTERM',runtime))
-    state_pool.add_state(common_state.FuncState('_INIT_PROCESS_0_SIGTERM', _INIT_PROCESS_0_SIGTERM, runtime))
-    state_pool.add_state(_INIT_PROCESS_1_WAIT(runtime))
-    state_pool.add_state(common_state.FuncState('_INIT_PROCESS_2_RUN', _INIT_PROCESS_2_RUN, runtime))
-    state_pool.add_state(_INIT_PROCESS_3_WAIT(runtime))
+    state_pool.add_state(common_state.TransState('INIT_PROCESS','_INIT_PROCESS_1_SIGTERM',runtime))
+    state_pool.add_state(common_state.FuncState('_INIT_PROCESS_1_SIGTERM', _INIT_PROCESS_1_SIGTERM, runtime))
+    state_pool.add_state(_INIT_PROCESS_2_WAIT(runtime))
+    state_pool.add_state(common_state.FuncState('_INIT_PROCESS_3_RUN', _INIT_PROCESS_3_RUN, runtime))
+    state_pool.add_state(_INIT_PROCESS_4_WAIT(runtime))
     #state_pool.add_state(common_state.TransState('_INIT_PROCESS_9_END','DEAD',runtime))
     state_pool.add_state(common_state.TransState('_INIT_PROCESS_9_END','NULL',runtime))
     state_pool.add_state(null_state.NullState(runtime))
 
 
-def _INIT_PROCESS_0_SIGTERM(runtime, **kwargs):
+def _INIT_PROCESS_1_SIGTERM(runtime, **kwargs):
     kill_process(runtime.config_process_executable_path, signal.SIGTERM, runtime)
-    runtime.state_pool.set_active('_INIT_PROCESS_1_WAIT')
+    runtime.state_pool.set_active('_INIT_PROCESS_2_WAIT')
 
-def _INIT_PROCESS_1_WAIT(runtime):
+def _INIT_PROCESS_2_WAIT(runtime):
     def f(runtime, **kwargs):
         if check_process(runtime.config_process_executable_path, runtime): return False
         if check_window(runtime.config_window_title): return False
         return True
     return common_state.WaitUntilState(
-        '_INIT_PROCESS_1_WAIT',
-        f, '_INIT_PROCESS_2_RUN',
+        '_INIT_PROCESS_2_WAIT',
+        f, '_INIT_PROCESS_3_RUN',
         10, 'DEAD',
         runtime
     )
 
 
-def _INIT_PROCESS_2_RUN(runtime, **kwargs):
+def _INIT_PROCESS_3_RUN(runtime, **kwargs):
     subprocess.Popen(args=runtime.config_process)
-    runtime.state_pool.set_active('_INIT_PROCESS_3_WAIT')
+    runtime.state_pool.set_active('_INIT_PROCESS_4_WAIT')
 
 
-def _INIT_PROCESS_3_WAIT(runtime):
+def _INIT_PROCESS_4_WAIT(runtime):
     def f(runtime, **kwargs):
         if not check_process(runtime.config_process_executable_path, runtime): return False
         if not check_window(runtime.config_window_title): return False
         return True
     return common_state.WaitUntilState(
-        '_INIT_PROCESS_3_WAIT',
+        '_INIT_PROCESS_4_WAIT',
         f, '_INIT_PROCESS_9_END',
         10, 'DEAD',
         runtime
