@@ -67,7 +67,12 @@ class Runtime:
 
         self.sct = mss.mss()
 
-        self.timer_pool.run()
+        try:
+            self.timer_pool.run()
+        except:
+            self.running = False
+            self.console.join()
+            raise
 
 
     def stop(self):

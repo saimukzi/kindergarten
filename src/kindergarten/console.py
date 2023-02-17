@@ -17,9 +17,15 @@ class Console:
         self.line_lock = threading.Condition()
         self.console = code.InteractiveConsole(self.sn)
         self.more = False
+        self.thread = None
 
     def start(self):
-        threading.Thread(target=self.run).start()
+        self.thread = threading.Thread(target=self.run).start()
+    
+    def join(self):
+        with self.line_lock:
+            self.line_lock.notify_all()
+        self.thread.join()
     
     def run(self):
         while self.runtime.running:
