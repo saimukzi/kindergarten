@@ -1,4 +1,4 @@
 conda env list
 
 conda deactivate
-conda activate p310t211c
+conda activate kg-p310t211c
