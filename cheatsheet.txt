@@ -1,15 +1,13 @@
 # Windows app env
 
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-
 # DL miniconda https://docs.conda.io/en/latest/miniconda.html
 # Better install menu item
 
-conda create --name gamebot-env python=3.10
+conda create --name kg-p310t211c python=3.10
 conda deactivate
-conda activate gamebot-env
+conda activate kg-p310t211c
 
-python -m pip install --upgrade pip
+python -m pip install --upgrade pip wheel
 pip install numpy opencv-python pillow pygetwindow
 pip install mss
 pip install wmi
