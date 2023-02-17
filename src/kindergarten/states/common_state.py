@@ -62,6 +62,12 @@ class FuncState(null_state.NullState):
         self.func(state=self, **kwargs)
 
 
+class IdleState(null_state.NullState):
+    def __init__(self, runtime):
+        super().__init__(runtime)
+        self.id = 'IDLE'
+
+
 # class DieState(null_state.NullState):
 # 
 #     def __init__(self,id,runtime):

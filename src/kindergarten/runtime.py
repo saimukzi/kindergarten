@@ -1,7 +1,6 @@
 import cv2
 import mss
 import numpy as np
-import pyautogui
 import pygetwindow
 import sys
 import time
@@ -12,6 +11,7 @@ from . import freq_timer
 from . import timer_pool
 from . import state_pool
 
+from .states import common_state
 from .states import dead_state
 from .states import init_process_state
 
@@ -43,9 +43,9 @@ class Runtime:
         self.timer_pool = timer_pool.TimerPool()
         self.state_pool = state_pool.StatePool()
 
-        init_process_state.add_state(self.state_pool, self)
         dead_state.add_state(self.state_pool, self)
-        self.state_pool.set_active('INIT_PROCESS')
+        self.state_pool.add_state(common_state.IdleState(self))
+        self.state_pool.set_active('IDLE')
 
         t0 = time.time()
         self.timer_pool.add_timer(freq_timer.FreqTimer(self, t0, self.config_fps, lambda sec: self.state_pool.tick(sec=sec, runtime=self)))
