@@ -47,8 +47,8 @@ class TransState(null_state.NullState):
         self.id = id
         self.next_id = next_id
 
-    def tick(self, **kwargs):
-        self.runtime.state_pool.set_active(self.next_id)
+    def tick(self, state_kwargs, **kwargs):
+        self.runtime.state_pool.set_active(self.next_id, state_kwargs=state_kwargs)
 
 
 class FuncState(null_state.NullState):

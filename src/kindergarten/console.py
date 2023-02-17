@@ -20,7 +20,8 @@ class Console:
         self.thread = None
 
     def start(self):
-        self.thread = threading.Thread(target=self.run).start()
+        self.thread = threading.Thread(target=self.run)
+        self.thread.start()
     
     def join(self):
         with self.line_lock:

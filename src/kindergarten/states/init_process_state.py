@@ -14,8 +14,7 @@ def add_state(state_pool, runtime):
     state_pool.add_state(_INIT_PROCESS_2_WAIT(runtime))
     state_pool.add_state(common_state.FuncState('_INIT_PROCESS_3_RUN', _INIT_PROCESS_3_RUN, runtime))
     state_pool.add_state(_INIT_PROCESS_4_WAIT(runtime))
-    #state_pool.add_state(common_state.TransState('_INIT_PROCESS_9_END','DEAD',runtime))
-    state_pool.add_state(common_state.TransState('_INIT_PROCESS_9_END','NULL',runtime))
+    state_pool.add_state(common_state.FuncState('_INIT_PROCESS_9_END', _INIT_PROCESS_9_END, runtime))
     state_pool.add_state(null_state.NullState(runtime))
 
 def _INIT_PROCESS_0_INIT(runtime, end_state_id='IDLE', end_state_kwargs={}, **kwargs):
@@ -55,6 +54,12 @@ def _INIT_PROCESS_4_WAIT(runtime):
         f, '_INIT_PROCESS_9_END',
         10, 'DEAD',
         runtime
+    )
+
+def _INIT_PROCESS_9_END(runtime, **kwargs):
+    runtime.state_pool.set_active(
+        runtime.var_dict['_INIT_PROCESS_END_ID'],
+        runtime.var_dict['_INIT_PROCESS_END_KWARGS']
     )
 
 def init_wmi(runtime):
