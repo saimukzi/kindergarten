@@ -1,8 +1,9 @@
 class NullState:
 
-    def __init__(self,runtime):
+    def __init__(self,runtime,**kwargs):
         self.id = 'NULL'
         self.runtime = runtime
+        self.kwargs = kwargs
         runtime.load_config_data(self)
 
     def tick(self, **kwargs):
