@@ -30,6 +30,8 @@ class Runtime:
         self.config_file = self.init_kargs['config_file']
         self.config_data = common.path_to_data(self.config_file)
         self.load_config_data(self)
+        
+        self.var_dict = {}
 
 
     def load_config_data(self, o):

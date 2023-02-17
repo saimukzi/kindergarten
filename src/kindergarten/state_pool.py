@@ -12,23 +12,23 @@ class StatePool:
     def add_state(self, state):
         self.id_to_state_dict[state.id] = state
 
-    def set_active(self, id, **kwargs):
+    def set_active(self, id, state_kwargs={}):
         print(f'set_active: id={id}')
         self.active_id = id
         # self.new_state = self.id_to_state_dict.get(self.active_id, None)
         self.new_state = self.id_to_state_dict[self.active_id]
-        self.new_state_kwargs = kwargs
+        self.new_state_kwargs = state_kwargs
         self.state_updated = True
 
     def tick(self, **kwargs):
         if self.state_updated:
             if self.active_state is not None:
-                self.active_state.on_inactive(**kwargs)
+                self.active_state.on_inactive(state_kwargs=self.active_state_kwargs, **kwargs)
             self.active_state = self.new_state
             self.active_state_kwargs = self.new_state_kwargs
             self.state_updated = False
             if self.active_state is not None:
-                self.active_state.on_active(**kwargs, **self.active_state_kwargs)
+                self.active_state.on_active(state_kwargs=self.active_state_kwargs, **kwargs)
 
         if self.active_state is None: return
-        self.active_state.tick(**kwargs, **self.active_state_kwargs)
+        self.active_state.tick(state_kwargs=self.active_state_kwargs, **kwargs)

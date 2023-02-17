@@ -8,7 +8,8 @@ from . import common_state
 from . import null_state
 
 def add_state(state_pool, runtime):
-    state_pool.add_state(common_state.TransState('INIT_PROCESS','_INIT_PROCESS_1_SIGTERM',runtime))
+    state_pool.add_state(common_state.TransState('INIT_PROCESS','_INIT_PROCESS_0_INIT',runtime))
+    state_pool.add_state(common_state.FuncState('_INIT_PROCESS_0_INIT', _INIT_PROCESS_0_INIT, runtime))
     state_pool.add_state(common_state.FuncState('_INIT_PROCESS_1_SIGTERM', _INIT_PROCESS_1_SIGTERM, runtime))
     state_pool.add_state(_INIT_PROCESS_2_WAIT(runtime))
     state_pool.add_state(common_state.FuncState('_INIT_PROCESS_3_RUN', _INIT_PROCESS_3_RUN, runtime))
@@ -17,6 +18,10 @@ def add_state(state_pool, runtime):
     state_pool.add_state(common_state.TransState('_INIT_PROCESS_9_END','NULL',runtime))
     state_pool.add_state(null_state.NullState(runtime))
 
+def _INIT_PROCESS_0_INIT(runtime, end_state_id='IDLE', end_state_kwargs={}, **kwargs):
+    runtime.var_dict['_INIT_PROCESS_END_ID']     = end_state_id
+    runtime.var_dict['_INIT_PROCESS_END_KWARGS'] = end_state_kwargs
+    runtime.state_pool.set_active('_INIT_PROCESS_1_SIGTERM')
 
 def _INIT_PROCESS_1_SIGTERM(runtime, **kwargs):
     kill_process(runtime.config_process_executable_path, signal.SIGTERM, runtime)
