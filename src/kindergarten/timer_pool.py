@@ -1,10 +1,12 @@
 import time
+import threading
 
 class TimerPool:
 
     def __init__(self):
         self.running = None
         self.timer_list = []
+        self.timer_lock = threading.Condition()
 
     def add_timer(self, timer):
         self.timer_list.append(timer)
@@ -33,7 +35,13 @@ class TimerPool:
             next_sec = min(next_sec)
 
             now_sec = time.time()
-            time.sleep(max(next_sec-now_sec,0))
+            #time.sleep(max(next_sec-now_sec,0))
+            with self.timer_lock:
+                self.timer_lock.wait(timeout=max(next_sec-now_sec,0))
+
+    def notify(self):
+        with self.timer_lock:
+            self.timer_lock.notify_all()
 
     def stop(self):
         self.running = False
