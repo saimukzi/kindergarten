@@ -21,7 +21,7 @@ class FreqTimer:
             self.update_next_sec_cache = False
         return self.next_sec_cache
 
-    def run(self, sec):
-        self.func(sec)
+    def tick(self, now_sec):
+        self.func(now_sec)
         self.tick_cnt += 1
         self.update_next_sec_cache = True

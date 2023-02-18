@@ -32,3 +32,8 @@ class StatePool:
 
         if self.active_state is None: return
         self.active_state.tick(state_kwargs=self.active_state_kwargs, **kwargs)
+
+    def next_sec(self, now_sec, **kwargs):
+        if self.state_updated: return now_sec
+        if self.active_state is None: return None
+        return self.active_state.next_sec(now_sec=now_sec, state_kwargs=self.active_state_kwargs, **kwargs)

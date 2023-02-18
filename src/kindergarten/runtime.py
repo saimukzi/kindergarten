@@ -48,9 +48,10 @@ class Runtime:
         dead_state.add_state(self.state_pool, self)
         self.state_pool.add_state(common_state.IdleState(self))
         self.state_pool.set_active('IDLE')
+        self.timer_pool.add_timer(self.state_pool)
 
         t0 = time.time()
-        self.timer_pool.add_timer(freq_timer.FreqTimer(self, t0, self.config_fps, lambda sec: self.state_pool.tick(sec=sec, runtime=self)))
+        # self.timer_pool.add_timer(freq_timer.FreqTimer(self, t0, self.config_fps, lambda sec: self.state_pool.tick(sec=sec, runtime=self)))
 
         self.console = console.Console(self)
         self.console.start()

@@ -14,3 +14,6 @@ class NullState:
 
     def on_inactive(self, **kwargs):
         pass
+
+    def next_sec(self, now_sec, **kwargs):
+        return now_sec

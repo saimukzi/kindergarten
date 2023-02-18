@@ -24,7 +24,7 @@ class TimerPool:
             active_timer_sec_idx_timer_list.sort()
 
             for _,_,timer in active_timer_sec_idx_timer_list:
-                timer.run(now_sec)
+                timer.tick(now_sec=now_sec)
 
             now_sec = time.time()
             next_sec = self.timer_list

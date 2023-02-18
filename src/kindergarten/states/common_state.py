@@ -12,11 +12,11 @@ class WaitState(null_state.NullState):
         self.timeout = timeout
         self.next_id = next_id
 
-    def on_active(self, sec, **kwargs):
-        self.end_sec = self.timeout+sec
+    def on_active(self, now_sec, **kwargs):
+        self.end_sec = self.timeout+now_sec
 
-    def tick(self, sec, **kwargs):
-        if sec<self.end_sec: return
+    def tick(self, now_sec, **kwargs):
+        if now_sec<self.end_sec: return
         self.runtime.state_pool.set_active(self.next_id)
 
 
@@ -30,13 +30,13 @@ class WaitUntilState(null_state.NullState):
         self.timeout = timeout
         self.neg_id = neg_id
 
-    def on_active(self, sec, **kwargs):
-        self.end_sec = self.timeout+sec
+    def on_active(self, now_sec, **kwargs):
+        self.end_sec = self.timeout+now_sec
 
-    def tick(self, sec, **kwargs):
-        if self.func(sec=sec, **kwargs):
+    def tick(self, now_sec, **kwargs):
+        if self.func(now_sec=now_sec, runtime=self.runtime, state=self, **kwargs):
             self.runtime.state_pool.set_active(self.pos_id)
-        if sec<self.end_sec: return
+        if now_sec<self.end_sec: return
         self.runtime.state_pool.set_active(self.neg_id)
 
 
@@ -59,7 +59,7 @@ class FuncState(null_state.NullState):
         self.func = func
 
     def tick(self, **kwargs):
-        self.func(state=self, **kwargs)
+        self.func(runtime=self.runtime, state=self, **kwargs)
 
 
 class IdleState(null_state.NullState):
