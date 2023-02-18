@@ -55,7 +55,8 @@ class Runtime:
 
         self.console = console.Console(self)
         self.console.start()
-        self.timer_pool.add_timer(freq_timer.FreqTimer(self, t0, self.config_fps, self.console.tick))
+        #self.timer_pool.add_timer(freq_timer.FreqTimer(self, t0, self.config_fps, self.console.tick))
+        self.timer_pool.add_timer(self.console)
 
 #         window = pygetwindow.getWindowsWithTitle(self.window_name)
 #         assert(len(window)==1)

@@ -18,6 +18,7 @@ class Console:
         self.console = code.InteractiveConsole(self.sn)
         self.more = False
         self.thread = None
+        self.next_sec_ret = None
 
     def start(self):
         self.thread = threading.Thread(target=self.run)
@@ -37,14 +38,21 @@ class Console:
             line = input(PS2 if self.more else PS1)
             with self.line_lock:
                 self.line = line
+                self.next_sec_ret = time.time()
+            self.runtime.timer_pool.notify()
 
-    def tick(self, _):
+    def next_sec(self, now_sec, **kwargs):
+        with self.line_lock:
+            return self.next_sec_ret
+
+    def tick(self, **kwargs):
         #print('tick')
         if self.runtime.running:
             with self.line_lock:
                 if self.line == None: return
                 line = self.line
                 self.line = None
+                self.next_sec_ret = None
                 self.line_lock.notify_all()
             try:
                 self.more = self.console.push(line)
