@@ -30,16 +30,24 @@ class Console:
         self.thread.join()
     
     def run(self):
-        while self.runtime.running:
-            with self.line_lock:
-                if self.runtime.running and self.line != None:
-                    self.line_lock.wait()
-                    continue
-            line = input(PS2 if self.more else PS1)
-            with self.line_lock:
-                self.line = line
-                self.next_sec_ret = time.time()
-            self.runtime.timer_pool.notify()
+        try:
+            while self.runtime.running:
+                with self.line_lock:
+                    if self.runtime.running and self.line != None:
+                        self.line_lock.wait()
+                        continue
+                if not self.runtime.running: break
+                #print('SLIQHQFHDJ Console.input')
+                line = input(PS2 if self.more else PS1)
+                with self.line_lock:
+                    self.line = line
+                    self.next_sec_ret = time.time()
+                self.runtime.timer_pool.notify()
+        except:
+            #print('ZUQXOXHDJI')
+            self.runtime.stop()
+            raise
+        #print('XYBPBTWTME')
 
     def next_sec(self, now_sec, **kwargs):
         with self.line_lock:
@@ -50,13 +58,18 @@ class Console:
         if self.runtime.running:
             with self.line_lock:
                 if self.line == None: return
-                line = self.line
+                #line = self.line
+                #self.line = None
+                #self.next_sec_ret = None
+                #self.line_lock.notify_all()
+                try:
+                    self.more = self.console.push(self.line)
+                except Exception as e:
+                    print(str(e))
+                except SystemExit as se:
+                    # print('CFWESMBYHD: SystemExit detected')
+                    self.runtime.stop()
                 self.line = None
                 self.next_sec_ret = None
                 self.line_lock.notify_all()
-            try:
-                self.more = self.console.push(line)
-            except Exception as e:
-                print(str(e))
-            except SystemExit as se:
-                self.runtime.stop()
+                # print('GVRMHHWGCC')

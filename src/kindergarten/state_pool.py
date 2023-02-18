@@ -1,7 +1,8 @@
 class StatePool:
 
-    def __init__(self):
+    def __init__(self, runtime):
         self.id_to_state_dict = {}
+        self.runtime = runtime
         self.active_id = None
         self.active_state = None
         self.active_state_kwargs = None
@@ -19,6 +20,7 @@ class StatePool:
         self.new_state = self.id_to_state_dict[self.active_id]
         self.new_state_kwargs = state_kwargs
         self.state_updated = True
+        self.runtime.timer_pool.notify()
 
     def tick(self, **kwargs):
         if self.state_updated:

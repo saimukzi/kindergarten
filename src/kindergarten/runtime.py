@@ -43,7 +43,7 @@ class Runtime:
         self.running = True
     
         self.timer_pool = timer_pool.TimerPool()
-        self.state_pool = state_pool.StatePool()
+        self.state_pool = state_pool.StatePool(self)
 
         dead_state.add_state(self.state_pool, self)
         self.state_pool.add_state(common_state.IdleState(self))
