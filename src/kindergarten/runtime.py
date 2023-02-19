@@ -33,7 +33,8 @@ class Runtime:
     
         self.main_lock = threading.Condition()
         self.event_bus  = event_bus.EventBus(self)
-        process_pool.init(self)
+        #process_pool.init(self)
+        self.process_pool = process_pool.ProcessPool(self)
         # self.timer_pool = timer_pool.TimerPool()
         self.state_pool = state_pool.StatePool(self)
 
