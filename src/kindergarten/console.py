@@ -34,7 +34,7 @@ class Console:
             while self.runtime.is_running():
                 with self.runtime.main_lock:
                     if self.line is not None:
-                        self.runtime.wait()
+                        self.runtime.running_wait()
                         continue
                 #print('SLIQHQFHDJ Console.input')
                 line = input(PS2 if self.more else PS1)

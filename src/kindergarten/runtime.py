@@ -94,6 +94,10 @@ class Runtime:
 
     def wait(self, timeout=None):
         with self.main_lock:
+            self.main_lock.wait(timeout=timeout)
+
+    def running_wait(self, timeout=None):
+        with self.main_lock:
             if not self.running: return
             self.main_lock.wait(timeout=timeout)
 

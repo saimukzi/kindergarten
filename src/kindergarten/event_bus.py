@@ -105,12 +105,12 @@ class EventBus:
         while self.runtime.is_running():
             if len(self.event_call_queue) <= 0:
                 with self.runtime.main_lock:
-                    self.runtime.wait()
+                    self.runtime.running_wait()
                     continue
             now_sec = time.time()
             run_sec = self.event_call_queue[0][0]
             if now_sec < run_sec:
-                self.runtime.wait(run_sec-now_sec)
+                self.runtime.running_wait(run_sec-now_sec)
                 continue
             self.run_tick(now_sec)
 
