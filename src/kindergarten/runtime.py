@@ -62,6 +62,8 @@ class Runtime:
 
         # self.sct = mss.mss()
 
+        self.event_bus.add_listener('EXIT', self.on_EXIT_INF, priority=common.INF)
+
         try:
             self.event_bus.run_loop()
         except:
@@ -84,6 +86,15 @@ class Runtime:
         with self.main_lock:
             if not self.running: return
             self.main_lock.wait(timeout=timeout)
+
+    def call_async(self, *args, **kwargs):
+        return self.event_bus.call_async(*args, **kwargs)
+
+    def call_sync(self, *args, **kwargs):
+        return self.event_bus.call_sync(*args, **kwargs)
+
+    def on_EXIT_INF(self):
+        self.stop()
 
     def notify(self):
         with self.main_lock:

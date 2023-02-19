@@ -1,6 +1,8 @@
 import json
 import types
 
+INF = float('inf')
+
 def path_to_data(path):
     with open(path) as fin:
         return json.load(fin)

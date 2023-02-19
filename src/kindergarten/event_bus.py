@@ -43,7 +43,7 @@ class EventBus:
         event_type_ns.listener_id_set.remove(listener_id)
         event_type_ns.listener_ns_list = None
 
-    def call_sync(self, event_type_id, kwargs):
+    def call_sync(self, event_type_id, kwargs={}):
         ret = {}
         event_type_ns = self._get_event_type_ns(event_type_id, prepare_listener_ns_list=True)
         for listener_ns in event_type_ns.listener_ns_list:
