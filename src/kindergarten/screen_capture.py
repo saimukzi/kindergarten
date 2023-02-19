@@ -31,7 +31,8 @@ class ScreenCapture:
         # print('SDJSCRAFHV ScreenShotState.tick')
         if not self.enable: return
         
+        capture_sec = time.time()
         screen_shot = self.sct.grab(self.window_box)
         screen_shot = numpy.array(screen_shot)
         
-        self.runtime.event_bus.call_async('SCREEN_CAPTURE_IMG', {'screen_shot':screen_shot})
+        self.runtime.event_bus.call_async('SCREEN_CAPTURE_IMG', {'screen_shot':screen_shot,'capture_sec':capture_sec})
