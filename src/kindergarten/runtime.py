@@ -9,21 +9,12 @@ from . import common
 from . import console
 from . import event_bus
 from . import freq_timer
-# from . import timer_pool
 from . import screen_capture
 from . import state_pool
 
 from .states import common_state
 from .states import dead_state
 from .states import init_process_state
-
-# CONFIG_KEY_LIST=[
-#     'fps',
-#     'process',
-#     'process_executable_path',
-#     'screen_record_path',
-#     'window_title',
-# ]
 
 
 class Runtime:
