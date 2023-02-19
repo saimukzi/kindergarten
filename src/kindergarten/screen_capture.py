@@ -1,4 +1,5 @@
 import mss
+import numpy
 import time
 import pygetwindow
 
@@ -9,10 +10,12 @@ class ScreenCapture:
     def __init__(self, runtime):
         self.runtime = runtime
         self.config = runtime.config
-        self.freq_timer = freq_timer.FreqTimer(self.runtime, time.time(), self.config.fps, self.tick)
         self.sct = mss.mss()
+        self.freq_timer = freq_timer.FreqCallSyncTimer(runtime, runtime.config.fps, 'SCREEN_CAPTURE_TICK')
 
         self.enable = False
+        
+        self.runtime.event_bus.add_listener('SCREEN_CAPTURE_TICK', self.on_SCREEN_CAPTURE_TICK)
 
     def set_enable(self, enable, **kwargs):
         if enable:
@@ -24,8 +27,11 @@ class ScreenCapture:
         self.enable = enable
         self.freq_timer.set_enable(enable=enable, **kwargs)
 
-    def tick(self, now_sec, **kwargs):
-        print('SDJSCRAFHV ScreenShotState.tick')
+    def on_SCREEN_CAPTURE_TICK(self, **kwargs):
+        # print('SDJSCRAFHV ScreenShotState.tick')
         if not self.enable: return
         
-        screen = self.runtime.sct.shot()
+        screen_shot = self.sct.grab(self.window_box)
+        screen_shot = numpy.array(screen_shot)
+        
+        self.runtime.event_bus.call_async('SCREEN_CAPTURE_IMG', {'screen_shot':screen_shot})

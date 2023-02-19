@@ -47,7 +47,7 @@ class Console:
             raise
         #print('XYBPBTWTME')
 
-    def on_CONSOLE(self):
+    def on_CONSOLE(self, **kwargs):
         #print('on_CONSOLE')
         if not self.runtime.is_running(): return
         with self.runtime.main_lock:

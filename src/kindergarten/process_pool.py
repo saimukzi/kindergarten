@@ -36,7 +36,7 @@ def init_process(runtime):
 
     return True
 
-def on_EXIT():
+def on_EXIT(**kwargs):
     runtime = runtime_m.instance
     kill_process(runtime.config.process_executable_path, signal.SIGTERM, runtime)
 

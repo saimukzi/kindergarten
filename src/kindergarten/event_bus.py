@@ -44,11 +44,11 @@ class EventBus:
         event_type_ns.listener_id_set.remove(listener_id)
         event_type_ns.listener_ns_list = None
 
-    def call_sync(self, event_type_id, kwargs={}):
+    def call_sync(self, event_type_id, kwargs={}, now_sec=time.time()):
         ret = {}
         event_type_ns = self._get_event_type_ns(event_type_id, prepare_listener_ns_list=True)
         for listener_ns in event_type_ns.listener_ns_list:
-            ret0 = listener_ns.callable(**kwargs, **listener_ns.kwargs)
+            ret0 = listener_ns.callable(now_sec=now_sec, **kwargs, **listener_ns.kwargs)
             if listener_ns.ret_id is not None:
                 ret[listener_ns.ret_id] = ret0
         return ret
@@ -69,7 +69,7 @@ class EventBus:
             ))
         self.runtime.notify()
 
-    def _call_async0(self, event_type_id, kwargs, callback, callback_kwargs, t):
+    def _call_async0(self, event_type_id, kwargs, callback, callback_kwargs, t, **_):
         ret_dict = {}
         event_type_ns = self._get_event_type_ns(event_type_id, prepare_listener_ns_list=True)
         for listener_ns in event_type_ns.listener_ns_list:
@@ -95,12 +95,12 @@ class EventBus:
                     },
                 ))
 
-    def _call_async1(self, listener_ns, kwargs, ret_dict):
-        ret0 = listener_ns.callable(**kwargs,**listener_ns.kwargs)
+    def _call_async1(self, listener_ns, kwargs, ret_dict, now_sec, **_):
+        ret0 = listener_ns.callable(now_sec=now_sec, **kwargs,**listener_ns.kwargs)
         if listener_ns.ret_id is not None:
             ret_dict[listener_ns.ret_id] = ret0
 
-    def _call_async2(self, callback, callback_kwargs, ret_dict):
+    def _call_async2(self, callback, callback_kwargs, ret_dict, **kwargs):
         callback(ret_dict, **callback_kwargs)
 
     def run_loop(self):
@@ -121,7 +121,7 @@ class EventBus:
         run_sec = self.event_call_queue[0][0]
         if now_sec < run_sec: return
         _,_,f,kwargs = heapq.heappop(self.event_call_queue)
-        f(**kwargs)
+        f(now_sec=now_sec, **kwargs)
 
     def _get_event_type_ns(self, event_type_id, prepare_listener_ns_list):
         if event_type_id not in self.event_type_id_to_ns_dict:

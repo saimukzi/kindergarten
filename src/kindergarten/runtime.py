@@ -50,7 +50,7 @@ class Runtime:
         # self.timer_pool.add_timer(freq_timer.FreqTimer(self, t0, self.config.fps, self.console.tick))
         # self.timer_pool.add_timer(self.console)
         
-        # self.screen_capture = screen_capture.ScreenCapture(self)
+        self.screen_capture = screen_capture.ScreenCapture(self)
         # self.timer_pool.add_timer(self.screen_capture.freq_timer)
 
 #         window = pygetwindow.getWindowsWithTitle(self.window_name)
@@ -95,7 +95,7 @@ class Runtime:
     def call_sync(self, *args, **kwargs):
         return self.event_bus.call_sync(*args, **kwargs)
 
-    def on_EXIT_INF(self):
+    def on_EXIT_INF(self, **kwargs):
         self.stop()
 
     def notify(self):
