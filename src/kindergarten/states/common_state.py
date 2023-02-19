@@ -68,6 +68,34 @@ class IdleState(null_state.NullState):
         self.id = 'IDLE'
 
 
+class FreqState(null_state.NullState):
+
+    def __init__(self, id, freq, runtime):
+        super().__init__(runtime)
+        self.id = id
+        self.freq = freq
+
+    def on_active(self, now_sec, **kwargs):
+        self.t0 = now_sec
+        self.tick_cnt = 0
+        self.next_sec_cache = None
+        self.update_next_sec_cache = True
+
+    def tick(self, now_sec, **kwargs):
+        self.tick_cnt += 1
+        self.update_next_sec_cache = True
+
+    def next_sec(self, now_sec, **kwargs):
+        if self.update_next_sec_cache:
+            self.next_sec_cache = self.t0 + self.tick_cnt / self.freq
+            if self.next_sec_cache < now_sec:
+                self.t0 = now_sec
+                self.tick_cnt = 0
+                self.next_sec_cache = now_sec
+            self.update_next_sec_cache = False
+        return self.next_sec_cache
+
+
 # class DieState(null_state.NullState):
 # 
 #     def __init__(self,id,runtime):

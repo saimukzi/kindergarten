@@ -4,7 +4,7 @@ class NullState:
         self.id = 'NULL'
         self.runtime = runtime
         self.kwargs = kwargs
-        runtime.load_config_data(self)
+        self.config = runtime.config
 
     def tick(self, **kwargs):
         pass

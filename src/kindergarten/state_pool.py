@@ -20,7 +20,8 @@ class StatePool:
         self.new_state = self.id_to_state_dict[self.active_id]
         self.new_state_kwargs = state_kwargs
         self.state_updated = True
-        self.runtime.timer_pool.notify()
+        #self.runtime.timer_pool.notify()
+        self.runtime.notify()
 
     def tick(self, **kwargs):
         if self.state_updated:
@@ -39,3 +40,9 @@ class StatePool:
         if self.state_updated: return now_sec
         if self.active_state is None: return None
         return self.active_state.next_sec(now_sec=now_sec, state_kwargs=self.active_state_kwargs, **kwargs)
+
+#    def call(self, name, kwargs):
+#        if self.state_updated: return None
+#        if self.active_state is None: return None
+#        if not hasattr(self.active_state, name): return None
+#        return getattr(self.active_state, name)(**kwargs)

@@ -23,13 +23,13 @@ def _INIT_PROCESS_0_INIT(runtime, end_state_id='IDLE', end_state_kwargs={}, **kw
     runtime.state_pool.set_active('_INIT_PROCESS_1_SIGTERM')
 
 def _INIT_PROCESS_1_SIGTERM(runtime, **kwargs):
-    kill_process(runtime.config_process_executable_path, signal.SIGTERM, runtime)
+    kill_process(runtime.config.process_executable_path, signal.SIGTERM, runtime)
     runtime.state_pool.set_active('_INIT_PROCESS_2_WAIT')
 
 def _INIT_PROCESS_2_WAIT(runtime):
     def f(runtime, **kwargs):
-        if check_process(runtime.config_process_executable_path, runtime): return False
-        if check_window(runtime.config_window_title): return False
+        if check_process(runtime.config.process_executable_path, runtime): return False
+        if check_window(runtime.config.window_title): return False
         return True
     return common_state.WaitUntilState(
         '_INIT_PROCESS_2_WAIT',
@@ -40,14 +40,14 @@ def _INIT_PROCESS_2_WAIT(runtime):
 
 
 def _INIT_PROCESS_3_RUN(runtime, **kwargs):
-    subprocess.Popen(args=runtime.config_process)
+    subprocess.Popen(args=runtime.config.process)
     runtime.state_pool.set_active('_INIT_PROCESS_4_WAIT')
 
 
 def _INIT_PROCESS_4_WAIT(runtime):
     def f(runtime, **kwargs):
-        if not check_process(runtime.config_process_executable_path, runtime): return False
-        if not check_window(runtime.config_window_title): return False
+        if not check_process(runtime.config.process_executable_path, runtime): return False
+        if not check_window(runtime.config.window_title): return False
         return True
     return common_state.WaitUntilState(
         '_INIT_PROCESS_4_WAIT',

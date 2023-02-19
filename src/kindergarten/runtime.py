@@ -1,26 +1,29 @@
 import cv2
-import mss
 import numpy as np
-import pygetwindow
 import sys
+import threading
 import time
+import traceback
 
 from . import common
 from . import console
+from . import event_bus
 from . import freq_timer
-from . import timer_pool
+# from . import timer_pool
+from . import screen_capture
 from . import state_pool
 
 from .states import common_state
 from .states import dead_state
 from .states import init_process_state
 
-CONFIG_KEY_LIST=[
-    'process',
-    'process_executable_path',
-    'window_title',
-    'fps',
-]
+# CONFIG_KEY_LIST=[
+#     'fps',
+#     'process',
+#     'process_executable_path',
+#     'screen_record_path',
+#     'window_title',
+# ]
 
 
 class Runtime:
@@ -28,35 +31,41 @@ class Runtime:
     def __init__(self, **kargs):
         self.init_kargs = kargs
         self.config_file = self.init_kargs['config_file']
-        self.config_data = common.path_to_data(self.config_file)
-        self.load_config_data(self)
-        
+        # self.config_data = common.path_to_data(self.config_file)
+        self.config = common.path_to_namespace(self.config_file)
+        # self.load_config_data(self)
+
         self.var_dict = {}
 
 
-    def load_config_data(self, o):
-        for k in CONFIG_KEY_LIST:
-            setattr(o, f'config_{k}', self.config_data[k])
+#    def load_config_data(self, o):
+#        for k in CONFIG_KEY_LIST:
+#            setattr(o, f'config_{k}', self.config_data[k])
 
 
     def run(self):
         self.running = True
     
-        self.timer_pool = timer_pool.TimerPool()
+        self.main_lock = threading.Condition()
+        self.event_bus  = event_bus.EventBus(self)
+        # self.timer_pool = timer_pool.TimerPool()
         self.state_pool = state_pool.StatePool(self)
 
         dead_state.add_state(self.state_pool, self)
         self.state_pool.add_state(common_state.IdleState(self))
         self.state_pool.set_active('IDLE')
-        self.timer_pool.add_timer(self.state_pool)
+        # self.timer_pool.add_timer(self.state_pool)
 
         t0 = time.time()
-        # self.timer_pool.add_timer(freq_timer.FreqTimer(self, t0, self.config_fps, lambda sec: self.state_pool.tick(sec=sec, runtime=self)))
+        # self.timer_pool.add_timer(freq_timer.FreqTimer(self, t0, self.config.fps, lambda sec: self.state_pool.tick(sec=sec, runtime=self)))
 
         self.console = console.Console(self)
         self.console.start()
-        #self.timer_pool.add_timer(freq_timer.FreqTimer(self, t0, self.config_fps, self.console.tick))
-        self.timer_pool.add_timer(self.console)
+        # self.timer_pool.add_timer(freq_timer.FreqTimer(self, t0, self.config.fps, self.console.tick))
+        # self.timer_pool.add_timer(self.console)
+        
+        # self.screen_capture = screen_capture.ScreenCapture(self)
+        # self.timer_pool.add_timer(self.screen_capture.freq_timer)
 
 #         window = pygetwindow.getWindowsWithTitle(self.window_name)
 #         assert(len(window)==1)
@@ -67,19 +76,34 @@ class Runtime:
 #        w = window
 #        self.window_box = {'top': w.top, 'left': w.left, 'width': w.width, 'height': w.height}
 
-        self.sct = mss.mss()
+        # self.sct = mss.mss()
 
         try:
-            self.timer_pool.run()
+            self.event_bus.run_loop()
         except:
-            self.running = False
+            traceback.print_exc()
+        finally:
+            self.stop()
             self.console.join()
-            raise
 
 
     def stop(self):
-        self.running = False
-        self.timer_pool.stop()
+        with self.main_lock:
+            self.running = False
+            self.main_lock.notify_all()
+
+    def wait(self, timeout=None):
+        with self.main_lock:
+            if not self.running: return
+            self.main_lock.wait(timeout=timeout)
+
+    def notify(self):
+        with self.main_lock:
+            self.main_lock.notify_all()
+
+    def is_running(self):
+        with self.main_lock:
+            return self.running
 
 
 instance = None
