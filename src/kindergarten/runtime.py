@@ -31,17 +31,10 @@ class Runtime:
     def __init__(self, **kargs):
         self.init_kargs = kargs
         self.config_file = self.init_kargs['config_file']
-        # self.config_data = common.path_to_data(self.config_file)
         self.config = common.path_to_namespace(self.config_file)
-        # self.load_config_data(self)
 
+        self.last_auto_id = 1
         self.var_dict = {}
-
-
-#    def load_config_data(self, o):
-#        for k in CONFIG_KEY_LIST:
-#            setattr(o, f'config_{k}', self.config_data[k])
-
 
     def run(self):
         self.running = True
@@ -108,6 +101,11 @@ class Runtime:
     def is_running(self):
         with self.main_lock:
             return self.running
+
+    def auto_id(self):
+        with self.main_lock:
+            self.last_auto_id += 1
+            return self.last_auto_id
 
 
 instance = None

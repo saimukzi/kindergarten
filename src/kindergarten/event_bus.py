@@ -13,17 +13,16 @@ class EventBus:
         self.event_type_id_to_ns_dict={}
         
         self.event_call_queue = []
-        self.last_auto_id = 1
 
     def add_listener(self, event_type_id, callable, listener_id=None, priority=0, ret_id=None):
         if listener_id == None:
-            listener_id = f'_AUTO_{self._auto_id()}'
+            listener_id = f'_AUTO_{self.runtime.auto_id()}'
         else:
             self.rm_listener(listener_id)
         
         listener_ns = ns()
         listener_ns.listener_id   = listener_id
-        listener_ns.order_id      = self._auto_id()
+        listener_ns.order_id      = self.runtime.auto_id()
         listener_ns.event_type_id = event_type_id
         listener_ns.callable      = callable
         listener_ns.priority      = priority
@@ -57,7 +56,7 @@ class EventBus:
         tt = min(t,time.time())
         with self.runtime.main_lock:
             heapq.heappush(self.event_call_queue,(
-                tt,self._auto_id(),
+                tt,self.runtime.auto_id(),
                 self._call_async0,
                 {
                     'event_type_id': event_type_id,
@@ -74,7 +73,7 @@ class EventBus:
         for listener_ns in event_type_ns.listener_ns_list:
             with self.runtime.main_lock:
                 heapq.heappush(self.event_call_queue,(
-                    t, self._auto_id(),
+                    t, self.runtime.auto_id(),
                     self._call_async1,
                     {
                         'listener_ns' : listener_ns,
@@ -85,7 +84,7 @@ class EventBus:
         if callback is not None:
             with self.runtime.main_lock:
                 heapq.heappush(self.event_call_queue,(
-                    t, self._auto_id(),
+                    t, self.runtime.auto_id(),
                     self._call_async2,
                     {
                         'callback' : callback,
@@ -120,10 +119,6 @@ class EventBus:
         if now_sec < run_sec: return
         _,_,f,kwargs = heapq.heappop(self.event_call_queue)
         f(**kwargs)
-
-    def _auto_id(self):
-        self.last_auto_id += 1
-        return self.last_auto_id
 
     def _get_event_type_ns(self, event_type_id, prepare_listener_ns_list):
         if event_type_id not in self.event_type_id_to_ns_dict:
