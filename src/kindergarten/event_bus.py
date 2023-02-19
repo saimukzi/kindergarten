@@ -14,7 +14,7 @@ class EventBus:
         
         self.event_call_queue = []
 
-    def add_listener(self, event_type_id, callable, listener_id=None, priority=0, ret_id=None):
+    def add_listener(self, event_type_id, callable, kwargs={}, listener_id=None, priority=0, ret_id=None):
         if listener_id == None:
             listener_id = f'_AUTO_{self.runtime.auto_id()}'
         else:
@@ -27,6 +27,7 @@ class EventBus:
         listener_ns.callable      = callable
         listener_ns.priority      = priority
         listener_ns.ret_id        = ret_id
+        listener_ns.kwargs        = kwargs
         self.listener_id_to_ns_dict[listener_id] = listener_ns
 
         event_type_ns = self._get_event_type_ns(event_type_id, prepare_listener_ns_list=False)
@@ -47,12 +48,12 @@ class EventBus:
         ret = {}
         event_type_ns = self._get_event_type_ns(event_type_id, prepare_listener_ns_list=True)
         for listener_ns in event_type_ns.listener_ns_list:
-            ret0 = listener_ns.callable(**kwargs)
+            ret0 = listener_ns.callable(**kwargs, **listener_ns.kwargs)
             if listener_ns.ret_id is not None:
                 ret[listener_ns.ret_id] = ret0
         return ret
 
-    def call_async(self, event_type_id, kwargs={}, callback=None, t=time.time()):
+    def call_async(self, event_type_id, kwargs={}, callback=None, callback_kwargs={}, t=time.time()):
         tt = min(t,time.time())
         with self.runtime.main_lock:
             heapq.heappush(self.event_call_queue,(
@@ -62,12 +63,13 @@ class EventBus:
                     'event_type_id': event_type_id,
                     'kwargs': kwargs,
                     'callback':callback,
+                    'callback_kwargs':callback_kwargs,
                     't':t,
                 },
             ))
         self.runtime.notify()
 
-    def _call_async0(self, event_type_id, kwargs, callback, t):
+    def _call_async0(self, event_type_id, kwargs, callback, callback_kwargs, t):
         ret_dict = {}
         event_type_ns = self._get_event_type_ns(event_type_id, prepare_listener_ns_list=True)
         for listener_ns in event_type_ns.listener_ns_list:
@@ -88,17 +90,18 @@ class EventBus:
                     self._call_async2,
                     {
                         'callback' : callback,
+                        'callback_kwargs': callback_kwargs,
                         'ret_dict' : ret_dict,
                     },
                 ))
 
     def _call_async1(self, listener_ns, kwargs, ret_dict):
-        ret0 = listener_ns.callable(**kwargs)
+        ret0 = listener_ns.callable(**kwargs,**listener_ns.kwargs)
         if listener_ns.ret_id is not None:
             ret_dict[listener_ns.ret_id] = ret0
 
-    def _call_async2(self, callback, ret_dict):
-        callback(ret_dict)
+    def _call_async2(self, callback, callback_kwargs, ret_dict):
+        callback(ret_dict, **callback_kwargs)
 
     def run_loop(self):
         while self.runtime.is_running():

@@ -9,6 +9,7 @@ from . import common
 from . import console
 from . import event_bus
 from . import freq_timer
+from . import process_pool
 from . import screen_capture
 from . import state_pool
 
@@ -32,6 +33,7 @@ class Runtime:
     
         self.main_lock = threading.Condition()
         self.event_bus  = event_bus.EventBus(self)
+        process_pool.init(self)
         # self.timer_pool = timer_pool.TimerPool()
         self.state_pool = state_pool.StatePool(self)
 
