@@ -24,6 +24,13 @@ class Hotkey:
             traceback.print_exc()
 
 
+    def hk_f11(self):
+        self.runtime.monkey.set_enable(True)
+
+    def hk_ctrl_f11(self):
+        self.runtime.monkey.set_enable(False)
+
+
     def hk_f10(self):
         self.runtime.screen_recorder.set_enable(True)
 

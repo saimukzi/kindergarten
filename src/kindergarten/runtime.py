@@ -12,6 +12,7 @@ from . import focus
 from . import freq_timer
 from . import hotkey
 # from . import keyboard_capture
+from . import monkey
 from . import process_pool
 from . import screen_capture
 from . import screen_recorder
@@ -59,8 +60,6 @@ class Runtime:
         self.screen_recorder = screen_recorder.ScreenRecorder(self)
         # self.keyboard_capture = keyboard_capture.KeyboardCapture(self)
         
-        self.hotkey = hotkey.Hotkey(self)
-
 #         window = pygetwindow.getWindowsWithTitle(self.window_name)
 #         assert(len(window)==1)
 #         window = window[0]
@@ -75,6 +74,10 @@ class Runtime:
         self.event_bus.add_listener('EXIT', self.on_EXIT_INF, priority=common.INF)
 
         self.focus = focus.Focus(self)
+        
+        self.monkey = monkey.Monkey(self)
+        
+        self.hotkey = hotkey.Hotkey(self)
 
         self.console = console.Console(self)
         self.console.start()
