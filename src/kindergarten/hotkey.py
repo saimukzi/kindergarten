@@ -13,7 +13,7 @@ class Hotkey:
 
         self.hotkey_tuple_list = self._get_hotkey_tuple_list()
 
-        self.set_enable(getattr(self.config, 'keyboard_capture_enable', False))
+        self.set_enable(getattr(self.config, 'hotkey_enable', False))
 
 
     def hk_f12(self):
@@ -24,12 +24,12 @@ class Hotkey:
             traceback.print_exc()
 
 
-    def hk_f11(self):
-        pass
+    def hk_f10(self):
+        self.runtime.screen_recorder.set_enable(True)
 
 
-    def hk_ctrl_f11(self):
-        pass
+    def hk_ctrl_f10(self):
+        self.runtime.screen_recorder.set_enable(False)
 
 
     def on_KEYBOARD_CAPTURE_EVENT(self, attr, **kwargs):

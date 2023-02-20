@@ -19,9 +19,6 @@ class ScreenRecorder:
             if not os.path.isdir(self.output_folder_path):
                 os.makedirs(self.output_folder_path)
 
-    def stop(self):
-        self.enable = False
-        
     def set_enable(self, enable):
         self.enable = enable
 
