@@ -1,4 +1,6 @@
 import keyboard
+import pygetwindow
+import traceback
 
 class Hotkey:
 
@@ -15,7 +17,11 @@ class Hotkey:
 
 
     def hk_f12(self):
-        pass
+        try:
+            self.runtime.focus.focus()
+        except pygetwindow.PyGetWindowException as pgwe:
+            # focus on window in other screen will fail, just print the err
+            traceback.print_exc()
 
 
     def hk_f11(self):

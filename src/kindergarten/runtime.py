@@ -8,6 +8,7 @@ import traceback
 from . import common
 from . import console
 from . import event_bus
+from . import focus
 from . import freq_timer
 from . import hotkey
 # from . import keyboard_capture
@@ -72,6 +73,8 @@ class Runtime:
         # self.sct = mss.mss()
 
         self.event_bus.add_listener('EXIT', self.on_EXIT_INF, priority=common.INF)
+
+        self.focus = focus.Focus(self)
 
         self.console = console.Console(self)
         self.console.start()
