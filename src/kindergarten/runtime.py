@@ -49,8 +49,6 @@ class Runtime:
         t0 = time.time()
         # self.timer_pool.add_timer(freq_timer.FreqTimer(self, t0, self.config.fps, lambda sec: self.state_pool.tick(sec=sec, runtime=self)))
 
-        self.console = console.Console(self)
-        self.console.start()
         # self.timer_pool.add_timer(freq_timer.FreqTimer(self, t0, self.config.fps, self.console.tick))
         # self.timer_pool.add_timer(self.console)
         
@@ -74,6 +72,9 @@ class Runtime:
         # self.sct = mss.mss()
 
         self.event_bus.add_listener('EXIT', self.on_EXIT_INF, priority=common.INF)
+
+        self.console = console.Console(self)
+        self.console.start()
 
         try:
             self.event_bus.run_loop()
