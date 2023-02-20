@@ -41,7 +41,7 @@ class ScreenCapture:
         capture_sec = time.time()
         screen_shot = self.sct.grab(self.window_box)
         screen_shot = numpy.array(screen_shot)
-        screen_shot = screen_shot[:,:,:3]
+        screen_shot = screen_shot[:,:,[2,1,0]]
 
         # print(screen_shot.shape)
         

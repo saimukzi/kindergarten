@@ -27,5 +27,5 @@ class ScreenRecorder:
         if self.output_folder_path is None: return
         capture_ts = int(capture_sec*1000)
         output_path = os.path.join(self.output_folder_path, f'{capture_ts}.png')
-        im = PIL.Image.fromarray(screen_shot[:,:,[2,1,0]])
+        im = PIL.Image.fromarray(screen_shot)
         im.save(output_path)
