@@ -11,6 +11,7 @@ from . import event_bus
 from . import freq_timer
 from . import process_pool
 from . import screen_capture
+from . import screen_recorder
 from . import state_pool
 
 from .states import common_state
@@ -53,6 +54,8 @@ class Runtime:
         
         self.screen_capture = screen_capture.ScreenCapture(self)
         # self.timer_pool.add_timer(self.screen_capture.freq_timer)
+        
+        self.screen_recorder = screen_recorder.ScreenRecorder(self)
 
 #         window = pygetwindow.getWindowsWithTitle(self.window_name)
 #         assert(len(window)==1)

@@ -22,7 +22,14 @@ class ScreenCapture:
             w = pygetwindow.getWindowsWithTitle(self.config.window_title)
             assert(len(w)==1)
             w = w[0]
-            self.window_box = {'top': w.top, 'left': w.left, 'width': w.width, 'height': w.height}
+            if hasattr(self.config,'screen_chop'):
+                sc = self.config.screen_chop
+                self.window_box = {
+                    'top': w.top+sc.y0, 'left': w.left+sc.x0,
+                    'width': sc.width, 'height': sc.height,
+                }
+            else:
+                self.window_box = {'top': w.top, 'left': w.left, 'width': w.width, 'height': w.height}
 
         self.enable = enable
         self.freq_timer.set_enable(enable=enable, **kwargs)
@@ -34,5 +41,8 @@ class ScreenCapture:
         capture_sec = time.time()
         screen_shot = self.sct.grab(self.window_box)
         screen_shot = numpy.array(screen_shot)
+        screen_shot = screen_shot[:,:,:3]
+
+        # print(screen_shot.shape)
         
         self.runtime.event_bus.call_async('SCREEN_CAPTURE_IMG', {'screen_shot':screen_shot,'capture_sec':capture_sec})
