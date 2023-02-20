@@ -4,6 +4,7 @@
 .python-version
 *.log
 /local
+.ipynb_checkpoints
 
 venv
 *.mid

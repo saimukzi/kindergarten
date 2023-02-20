@@ -7,6 +7,8 @@ conda create --name p310t211c python=3.10
 conda deactivate
 conda activate p310t211c
 
+conda install -c conda-forge jupyterlab
+
 python -m pip install --upgrade pip wheel
 pip install tensorflow-cpu
 
