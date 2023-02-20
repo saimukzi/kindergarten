@@ -8,9 +8,6 @@ conda deactivate
 conda activate kg-p310t211c
 
 python -m pip install --upgrade pip wheel
-pip install numpy opencv-python pillow pygetwindow
-pip install mss
-pip install wmi
 pip install tensorflow-cpu
 
 # verify tensorflow
@@ -18,3 +15,6 @@ python -c "import tensorflow as tf; print(tf.reduce_sum(tf.random.normal([1000, 
 
 # verify GPU
 python -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
+
+# package for dev
+pip install --upgrade numpy opencv-python pillow pygetwindow mss wmi keyboard

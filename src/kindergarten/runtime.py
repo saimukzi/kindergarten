@@ -9,6 +9,7 @@ from . import common
 from . import console
 from . import event_bus
 from . import freq_timer
+from . import keyboard_capture
 from . import process_pool
 from . import screen_capture
 from . import screen_recorder
@@ -56,6 +57,7 @@ class Runtime:
         # self.timer_pool.add_timer(self.screen_capture.freq_timer)
         
         self.screen_recorder = screen_recorder.ScreenRecorder(self)
+        self.keyboard_capture = keyboard_capture.KeyboardCapture(self)
 
 #         window = pygetwindow.getWindowsWithTitle(self.window_name)
 #         assert(len(window)==1)
