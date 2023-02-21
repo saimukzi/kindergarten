@@ -16,6 +16,7 @@ from . import monkey
 from . import process_pool
 from . import screen_capture
 from . import screen_recorder
+from . import screen_sample_tools
 from . import state_pool
 
 from .states import common_state
@@ -74,6 +75,8 @@ class Runtime:
         self.event_bus.add_listener('EXIT', self.on_EXIT_INF, priority=common.INF)
 
         self.focus = focus.Focus(self)
+        
+        self.screen_sample_tools = screen_sample_tools.ScreenSampleTools(self)
         
         self.monkey = monkey.Monkey(self)
         
