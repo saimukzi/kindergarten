@@ -20,7 +20,17 @@ class ScreenCapture:
     def set_enable(self, enable, **kwargs):
         if enable:
             w = pygetwindow.getWindowsWithTitle(self.config.window_title)
-            assert(len(w)==1)
+            w = filter(lambda i:i.title==self.config.window_title,w)
+            if hasattr(self.config, 'window_width'):
+                w = filter(lambda i:i.width==self.config.window_width,w)
+            if hasattr(self.config, 'window_height'):
+                w = filter(lambda i:i.height==self.config.window_height,w)
+            w = list(w)
+            #assert(len(w)==1)
+            if len(w) != 1:
+                for ww in w:
+                    print(ww)
+                assert(False)
             w = w[0]
             if hasattr(self.config,'screen_chop'):
                 sc = self.config.screen_chop

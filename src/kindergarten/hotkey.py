@@ -25,17 +25,26 @@ class Hotkey:
 
 
     def hk_f11(self):
-        self.runtime.monkey.set_enable(True)
+        self.runtime.screen_capture.set_enable(True)
+
 
     def hk_ctrl_f11(self):
-        self.runtime.monkey.set_enable(False)
+        self.runtime.screen_capture.set_enable(False)
 
 
     def hk_f10(self):
-        self.runtime.screen_recorder.set_enable(True)
+        self.runtime.monkey.set_enable(True)
 
 
     def hk_ctrl_f10(self):
+        self.runtime.monkey.set_enable(False)
+
+
+    def hk_f9(self):
+        self.runtime.screen_recorder.set_enable(True)
+
+
+    def hk_ctrl_f9(self):
         self.runtime.screen_recorder.set_enable(False)
 
 

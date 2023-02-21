@@ -10,6 +10,7 @@ class ScreenRecorder:
         self.runtime.event_bus.add_listener('SCREEN_CAPTURE_IMG', self.on_SCREEN_CAPTURE_IMG)
         self.enable = False
         self.game_state_id = None
+        self.set_game_state_id('_')
 
     def set_game_state_id(self, game_state_id):
         self.game_state_id = game_state_id
