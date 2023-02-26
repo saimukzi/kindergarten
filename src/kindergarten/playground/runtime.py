@@ -5,7 +5,8 @@ import threading
 import time
 import traceback
 
-from . import common
+from kindergarten import common
+
 from . import console
 from . import event_bus
 from . import focus
