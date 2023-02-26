@@ -18,6 +18,7 @@ from . import screen_capture
 from . import screen_recorder
 from . import screen_sample_tools
 from . import state_pool
+from . import thread_pool
 
 from .states import common_state
 from .states import dead_state
@@ -38,6 +39,8 @@ class Runtime:
         self.running = True
     
         self.main_lock = threading.Condition()
+        self.thread_pool = thread_pool.ThreadPool(self)
+        
         self.event_bus  = event_bus.EventBus(self)
         #process_pool.init(self)
         self.process_pool = process_pool.ProcessPool(self)
