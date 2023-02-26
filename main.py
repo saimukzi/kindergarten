@@ -6,7 +6,7 @@ SRC_PATH = os.path.join(PROJECT_PATH,'src')
 sys.path.append(SRC_PATH)
 
 import argparse
-import kindergarten.runtime as runtime
+import kindergarten.playground.runtime as runtime
 
 
 def main():
