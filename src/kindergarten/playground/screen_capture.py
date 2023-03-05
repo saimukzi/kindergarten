@@ -54,5 +54,6 @@ class ScreenCapture:
         screen_shot = screen_shot[:,:,:3]
 
         # print(screen_shot.shape)
+        uuid = self.runtime.auto_id()
         
         self.runtime.event_bus.call_async('SCREEN_CAPTURE_IMG', {'screen_shot':screen_shot,'capture_sec':capture_sec})

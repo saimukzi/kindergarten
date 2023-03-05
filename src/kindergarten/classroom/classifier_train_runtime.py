@@ -10,22 +10,28 @@ import traceback
 
 from kindergarten import common
 
+#from kindergarten.hina.holocure import state_classifier_model_factory
+from kindergarten.hina.holocure import state_classifier
+
 class ClassifierTrainRuntime:
 
     def __init__(self, args):
         self.init_args = args
         self.config = common.read_config(self.init_args.config_file)
 
+        self.classifier_config = list(filter(lambda i:i.id==self.init_args.classifier_id,self.config.dlmodel_list))[0]
+        #self.model_factory = state_classifier_model_factory.StateClassifierModelFactory()
+        self.classifier = state_classifier.StateClassifier(self.classifier_config)
+
 
     def run(self):
-        tmp = self.config.dlmodel_list
-        tmp = filter(lambda i:i.id==self.init_args.dlmodel_id, tmp)
-        tmp = list(tmp)
-        assert(len(tmp)==1)
-        tmp = tmp[0]
-        self.classifier_config = tmp
-
-        assert(self.classifier_config.type == 'classifier')
+        #tmp = self.config.dlmodel_list
+        #tmp = filter(lambda i:i.id==self.init_args.classifier_id, tmp)
+        #tmp = list(tmp)
+        #assert(len(tmp)==1)
+        #tmp = tmp[0]
+        #self.classifier_config = tmp
+        #assert(self.classifier_config.type == 'classifier')
 
         common.makedirs(os.path.dirname(self.classifier_config.model_path))
         
@@ -82,7 +88,8 @@ class ClassifierTrainRuntime:
             batch_size = math.ceil(train_sample_size/div_cnt)
             print(f'YLMGWCXGUS batch_size={batch_size}')
 
-            model = self.create_mode(state_count)
+            model = self.classifier.create_model(state_count)
+            self.classifier.compile_model(model)
             model.fit(
                 train_imgs, train_labels,
                 validation_data=(valid_imgs, valid_labels),
@@ -125,33 +132,33 @@ class ClassifierTrainRuntime:
         #print(f'ELAMJDYXZR load_img {fn} END')
         return img
 
-    def create_mode(self, state_count):
-        INPUT_SHAPE = (128,128,3)
-        model = tf.keras.Sequential([
-            tf.keras.layers.GaussianNoise(stddev=0.2, input_shape=INPUT_SHAPE),
-            tf.keras.layers.Conv2D(filters=3, kernel_size=1, padding='valid', activation='elu'),
-            tf.keras.layers.Conv2D(filters=8, kernel_size=5, padding='valid', activation='elu'),
-            tf.keras.layers.Conv2D(filters=8, kernel_size=1, padding='valid', activation='elu'),
-            tf.keras.layers.MaxPooling2D(pool_size=4),
-            tf.keras.layers.Conv2D(filters=8, kernel_size=1, padding='valid', activation='elu'),
-            tf.keras.layers.Conv2D(filters=8, kernel_size=4, padding='valid', activation='elu'),
-            tf.keras.layers.Conv2D(filters=8, kernel_size=1, padding='valid', activation='elu'),
-            tf.keras.layers.MaxPooling2D(pool_size=4),
-            tf.keras.layers.Conv2D(filters=8, kernel_size=1, padding='valid', activation='elu'),
-            tf.keras.layers.Conv2D(filters=32, kernel_size=7, padding='valid', activation='elu'),
-            tf.keras.layers.Flatten(activity_regularizer=tf.keras.regularizers.L2(0.001)),
-            #tf.keras.layers.Flatten(),
-            #tf.keras.layers.BatchNormalization(),
-            tf.keras.layers.Dense(32, activation='elu'),
-            tf.keras.layers.Dropout(0.5),
-            tf.keras.layers.Dense(state_count, activity_regularizer=tf.keras.regularizers.L1(0.001)),
-            #tf.keras.layers.Dense(state_count),
-            tf.keras.layers.Softmax(),
-        ])
-        model.compile(optimizer='adam',
-                      loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-                      metrics=['accuracy'])
-        return model
+#    def create_mode(self, state_count):
+#        INPUT_SHAPE = (128,128,3)
+#        model = tf.keras.Sequential([
+#            tf.keras.layers.GaussianNoise(stddev=0.2, input_shape=INPUT_SHAPE),
+#            tf.keras.layers.Conv2D(filters=3, kernel_size=1, padding='valid', activation='elu'),
+#            tf.keras.layers.Conv2D(filters=8, kernel_size=5, padding='valid', activation='elu'),
+#            tf.keras.layers.Conv2D(filters=8, kernel_size=1, padding='valid', activation='elu'),
+#            tf.keras.layers.MaxPooling2D(pool_size=4),
+#            tf.keras.layers.Conv2D(filters=8, kernel_size=1, padding='valid', activation='elu'),
+#            tf.keras.layers.Conv2D(filters=8, kernel_size=4, padding='valid', activation='elu'),
+#            tf.keras.layers.Conv2D(filters=8, kernel_size=1, padding='valid', activation='elu'),
+#            tf.keras.layers.MaxPooling2D(pool_size=4),
+#            tf.keras.layers.Conv2D(filters=8, kernel_size=1, padding='valid', activation='elu'),
+#            tf.keras.layers.Conv2D(filters=32, kernel_size=7, padding='valid', activation='elu'),
+#            tf.keras.layers.Flatten(activity_regularizer=tf.keras.regularizers.L2(0.001)),
+#            #tf.keras.layers.Flatten(),
+#            #tf.keras.layers.BatchNormalization(),
+#            tf.keras.layers.Dense(32, activation='elu'),
+#            tf.keras.layers.Dropout(0.5),
+#            tf.keras.layers.Dense(state_count, activity_regularizer=tf.keras.regularizers.L1(0.001)),
+#            #tf.keras.layers.Dense(state_count),
+#            tf.keras.layers.Softmax(),
+#        ])
+#        model.compile(optimizer='adam',
+#                      loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+#                      metrics=['accuracy'])
+#        return model
 
 
 instance = None

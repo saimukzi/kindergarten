@@ -14,7 +14,7 @@ def main():
     parser.add_argument('config_file')
     args = parser.parse_args()
 
-    runtime.run(**vars(args))
+    runtime.run(args)
 
 
 if __name__=="__main__":

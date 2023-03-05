@@ -25,13 +25,14 @@ from .states import common_state
 from .states import dead_state
 from .states import init_process_state
 
+from kindergarten.hina.holocure import holocurebot
 
 class Runtime:
 
-    def __init__(self, **kargs):
-        self.init_kargs = kargs
-        self.config_file = self.init_kargs['config_file']
-        self.config = common.path_to_namespace(self.config_file)
+    def __init__(self, cmd_args):
+        self.init_cmd_args = cmd_args
+        self.config_file = self.init_cmd_args.config_file
+        self.config = common.read_config(self.config_file)
 
         self.last_auto_id = 1
         self.var_dict = {}
@@ -83,6 +84,8 @@ class Runtime:
         self.screen_sample_tools = screen_sample_tools.ScreenSampleTools(self)
         
         self.monkey = monkey.Monkey(self)
+        
+        self.holocurebot = holocurebot.HoloCureBot(self)
         
         self.hotkey = hotkey.Hotkey(self)
 
@@ -137,7 +140,7 @@ class Runtime:
 
 instance = None
 
-def run(**kargs):
+def run(cmd_args):
     global instance
-    instance = Runtime(**kargs)
+    instance = Runtime(cmd_args)
     instance.run()

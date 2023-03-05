@@ -58,6 +58,7 @@ class Hotkey:
 
 
     def set_enable(self, enable, **kwargs):
+        # print(f'self.enable={self.enable}, enable={enable}')
         if self.enable == enable: return
         self.enable = enable
         if enable:

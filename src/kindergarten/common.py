@@ -33,6 +33,8 @@ def _read_config(data):
         return data
     if type(data) == int:
         return data
+    if type(data) == bool:
+        return data
     if type(data) == list:
         data = map(_read_config,data)
         data = list(data)
@@ -48,7 +50,7 @@ def _read_config(data):
                 k=k[:-2]
             setattr(ret, k, _read_config(v))
         return ret
-
+    assert(False)
 
 def not_func(func):
     def ret(b):
