@@ -40,7 +40,7 @@ class ClassifierTrainRuntime:
         tmp = os.listdir(sample_folder_path)
         tmp = sorted(tmp)
         self.label_list = tmp
-        self.label_id_name_list = enumerate(self.label_list)
+        self.label_id_name_list = list(enumerate(self.label_list))
         state_count = len(self.label_list)
 
         common.data_to_path(self.label_list, os.path.join(self.classifier_config.model_path, 'label_list.json'))
