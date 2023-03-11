@@ -1,5 +1,7 @@
 import json
 import os
+import shutil
+import time
 import types
 
 INF = float('inf')
@@ -60,4 +62,51 @@ def not_func(func):
 
 def makedirs(fn):
     if not os.path.isdir(fn):
-        os.makedirs(fn)
+        os.makedirs(fn)\
+
+def rmdir(fn):
+    shutil.rmtree(fn, ignore_errors=True)
+
+def reset_dir(fn):
+    rmdir(fn)
+    makedirs(fn)
+
+# label_list,label_id_name_list,label_count = common.get_label_list(path)
+def get_label_list(sample_path):
+    label_list = os.listdir(sample_path)
+    label_list = sorted(label_list)
+    label_id_name_list = list(enumerate(label_list))
+    label_count = len(label_list)
+    return label_list, label_id_name_list, label_count
+
+
+# label_list,label_id_name_list,label_count = common.path_to_label_list(path)
+def path_to_label_list(path):
+    label_list = path_to_data(path)
+    label_id_name_list = list(enumerate(label_list))
+    label_count = len(label_list)
+    return label_list, label_id_name_list, label_count
+
+
+def get_sample_path_lid_list(sample_folder_path):
+    #print(f'DKRYFTPYZR sample_folder_path={sample_folder_path}')
+    label_list,label_id_name_list,label_count = get_label_list(sample_folder_path)
+
+    ret_list = []
+    for lid, lname in label_id_name_list:
+        #print(f'ORBZJSBMBY sample_folder_path={sample_folder_path}, lname={lname}')
+        label_path = os.path.join(sample_folder_path, lname)
+        #print(f'FCNGQTPLVV label_path={label_path}')
+        sample_filename_list = os.listdir(label_path)
+        for sample_filename in sample_filename_list:
+            sample_path = os.path.join(label_path, sample_filename)
+            ret_list.append((sample_path, lid))
+    return ret_list
+
+
+def now():
+    return int(time.time()*1000)
+
+
+mv = shutil.move
+copy = shutil.copyfile

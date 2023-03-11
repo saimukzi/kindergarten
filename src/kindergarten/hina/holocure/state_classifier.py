@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from kindergarten.hina.common.shard_classifier import ShardClassifier
+from kindergarten.hina.common.fold_classifier import ShardClassifier
 
 class StateClassifier(ShardClassifier):
 

@@ -5,7 +5,7 @@ PROJECT_PATH = os.path.dirname(__file__)
 SRC_PATH = os.path.join(PROJECT_PATH,'src')
 sys.path.append(SRC_PATH)
 
-import kindergarten.classroom.kfcv_img_classifier.train
+import kindergarten.classroom.classifier_sample_pick_bad
 
 if __name__=="__main__":
-    kindergarten.classroom.kfcv_img_classifier.train.main()
+    kindergarten.classroom.classifier_sample_pick_bad.main()

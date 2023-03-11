@@ -19,8 +19,9 @@ class ShardClassifier():
 
         self.model_list = []
         
-        for shard_id in range(self.classifier_config.shard_count):
-            weight_path = os.path.join(self.classifier_config.model_path, f'weight_{shard_id}.hdf5')
+        for fold_id in range(self.classifier_config.fold_count):
+            weight_path = os.path.join(self.classifier_config.model_path, f'fold_weight_{fold_id}.hdf5')
+            print(weight_path)
             #model = self.model_factory.create_model(len(self.label_list))
             model = self.create_model(len(self.label_list))
             model.load_weights(weight_path)
@@ -28,12 +29,12 @@ class ShardClassifier():
         
         self.score_np2_shape = (len(self.model_list),len(self.label_list))
         
-        print(self.model_list[0].layers[0].dtype)
+        #print(self.model_list[0].layers[0].dtype)
 
     def predict(self, x):
         score_np2 = list(map(lambda i:i(x),self.model_list))
         score_np2 = np.asarray(score_np2)
-        score_np2 = score_np2.reshape(self.score_np2_shape)
+        score_np2 = score_np2.reshape(self.score_np2_shape) # TODO: input is img[], output is score?
         label_idx_np = score_np2.argmax(axis=1)
         label_k_np, label_c_np = np.unique(label_idx_np, return_counts=True)
         if len(label_k_np)==1:
@@ -46,3 +47,9 @@ class ShardClassifier():
             csk_list = sorted(csk_list)
             label_name = self.label_list[csk_list[0][2]]
             return (label_name, False)
+
+    # return: score[sample:fold:label_id]
+    def predict0(self, x):
+        score_np = list(map(lambda i:i(x),self.model_list))
+        score_np = np.asarray(score_np)
+        return score_np
