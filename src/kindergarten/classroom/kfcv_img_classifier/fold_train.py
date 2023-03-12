@@ -49,7 +49,7 @@ class KicFoldTrainRuntime:
         weight_fn = os.path.join(self.classifier_config.model_path, f'fold_weight_{self.fold_id}.hdf5')
         checkpointer = tf.keras.callbacks.ModelCheckpoint(filepath=weight_fn, verbose=1, save_best_only=True)
         
-        log_dir = os.path.join(self.config.tmp_path, 'fit_log', str(self.now), str(self.fold_id))
+        log_dir = self.config.fit_log_dir_path
         common.makedirs(log_dir)
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
         
